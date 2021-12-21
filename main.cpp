@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstdint>
+#include <clocale>
 
 #include <Windows.h>
 #include <processthreadsapi.h>
@@ -184,7 +185,7 @@ static int do_builtin_ls(vector<WCHAR *> &args)
     }
 
     wprintf(LSFMT, L"Mode", L"Last Write Time", L"Size", L"Name");
-    wprintf(LSFMT, L"-----", L"---------------", L"----", L"----");
+    wprintf(LSFMT, L"----", L"---------------", L"----", L"----");
     do {
         WCHAR mode[10], lwt[20], length[20];
         ZeroMemory(lwt, _countof(mode));
@@ -274,6 +275,7 @@ int wmain(int argc, WCHAR *argv[])
     WCHAR buf[1024];
     WCHAR *line;
 
+    _wsetlocale(LC_ALL, L"");
     parse_args(argc, argv);
     parse_config();
 
