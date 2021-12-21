@@ -21,9 +21,15 @@
     <ClCompile Include="win_getopt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="builtin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="win_getopt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="builtin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

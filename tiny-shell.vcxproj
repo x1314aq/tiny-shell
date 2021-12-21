@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="builtin.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="win_getopt.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="builtin.h" />
     <ClInclude Include="win_getopt.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
