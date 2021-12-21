@@ -15,6 +15,7 @@
 #include "win_getopt.h"
 
 #define WNULL L'\0'
+#define LSFMT L"%-10s%-20s%10s  %-30s\n"
 
 using namespace std;
 
@@ -161,7 +162,7 @@ static inline void get_lwt(FILETIME time, WCHAR *buf, size_t len)
     FileTimeToSystemTime(&time, &utc);
     SystemTimeToTzSpecificLocalTime(nullptr, &utc, &local);
 
-    swprintf_s(buf, len, L"%02d/%02d/%d %02d:%02d", local.wMonth, local.wDay, local.wYear,
+    swprintf_s(buf, len, L"%02d/%02d/%d %02d:%02d:%02d", local.wMonth, local.wDay, local.wYear,
         local.wHour, local.wMinute, local.wSecond);
 }
 
@@ -182,28 +183,26 @@ static int do_builtin_ls(vector<WCHAR *> &args)
         return 1;
     }
 
-    wprintf(L"%-10s%-20s%-20s%-30s\n", L"Mode", L"Last Write Time", L"Length (bytes)", L"Name");
-    wprintf(L"%-10s%-20s%-20s%-30s\n", L"-----", L"---------------", L"--------------", L"----");
+    wprintf(LSFMT, L"Mode", L"Last Write Time", L"Size", L"Name");
+    wprintf(LSFMT, L"-----", L"---------------", L"----", L"----");
     do {
         WCHAR mode[10], lwt[20], length[20];
         ZeroMemory(lwt, _countof(mode));
         ZeroMemory(length, _countof(mode));
 
-        wcscpy_s(mode, _countof(mode), L"-----");
+        wcscpy_s(mode, _countof(mode), L"----");
         if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
             mode[0] = L'd';
-        }
-        else if (data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) {
+        } else if (data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) {
             mode[0] = L'l';
-        }
-        else if (data.dwFileAttributes &  FILE_ATTRIBUTE_NORMAL) {
+        } else if (data.dwFileAttributes & FILE_ATTRIBUTE_NORMAL) {
             mode[0] = L'f';
         }
 
         get_lwt(data.ftLastWriteTime, lwt, _countof(lwt));
         swprintf_s(length, _countof(length), L"%lu", data.nFileSizeHigh * (MAXDWORD + 1) + data.nFileSizeLow);
 
-        wprintf(L"%-10s%-20s%-20s%-30s\n", mode, lwt, length, data.cFileName);
+        wprintf(LSFMT, mode, lwt, length, data.cFileName);
     } while (FindNextFileW(find, &data) != 0);
 
     if (GetLastError() != ERROR_NO_MORE_FILES) {
@@ -255,7 +254,7 @@ static void parse_args(int argc, WCHAR *argv[])
 static void parse_config()
 {
     HANDLE fp = CreateFileW(g_config, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-                            FILE_ATTRIBUTE_READONLY | FILE_FLAG_SEQUENTIAL_SCAN, nullptr);
+        FILE_ATTRIBUTE_READONLY | FILE_FLAG_SEQUENTIAL_SCAN, nullptr);
 
     if (fp == INVALID_HANDLE_VALUE) {
         wprintf(L"open config file \"%s\" failed %d\n", g_config, GetLastError());
