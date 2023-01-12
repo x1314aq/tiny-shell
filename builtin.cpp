@@ -36,6 +36,7 @@ static int do_builtin_cd(vector<WCHAR *> &args)
 
 static int do_builtin_pwd(vector<WCHAR *> &args)
 {
+    (void)args;
     WCHAR cwd[MAX_PATH];
     DWORD ret = GetCurrentDirectoryW(_countof(cwd), cwd);
 
@@ -111,6 +112,7 @@ static int do_builtin_ls(vector<WCHAR *> &args)
 
 [[noreturn]] static int do_builtin_exit(vector<WCHAR *> &args)
 {
+    (void)args;
     exit(0);
 }
 
@@ -387,8 +389,13 @@ const static struct command g_builtin[] = {
 
 const struct command *is_builtin(WCHAR *cmd)
 {
-    for (int i = 0; i < ARRAYSIZE(g_builtin); i++) {
-        if (wcscmp(cmd, g_builtin[i].cmd) == 0) {
+    size_t n = wcslen(cmd);
+    size_t k = 0;
+
+    while (k < n && !iswspace(cmd[k])) k++;
+
+    for (unsigned i = 0; i < ARRAYSIZE(g_builtin); i++) {
+        if (wcsncmp(cmd, g_builtin[i].cmd, k) == 0) {
             return &g_builtin[i];
         }
     }

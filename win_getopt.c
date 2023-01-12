@@ -523,7 +523,7 @@ int getoptW_parse( int mode, getoptW_std_args, ... )
         /*
          * we use `this_arg' to store these temporarily.
          */
-        WCHAR *this_arg = _malloca(sizeof(WCHAR *) * optspan);
+        WCHAR **this_arg = _malloca(sizeof(WCHAR *) * optspan);
         /*
          * we cannot manipulate `argv' directly, since the `getoptW'
          * API prototypes it as `read-only'; this cast to `arglist'
